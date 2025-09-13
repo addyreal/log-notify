@@ -10,7 +10,7 @@
 
 void usage(char** argv) {
 	std::cerr << "Usage: " << argv[0]
-		<< " [--nostdout] [--nostderr] <string> <command> <file1> [file2 ...]"
+		<< " [--nostdout] [--nostderr] <string> <timeout> <command> <file1> [file2 ...]"
 		<< std::endl;
 }
 
@@ -21,7 +21,7 @@ struct LogState {
 };
 
 int main(int argc, char** argv) {
-	if(argc < 4) {
+	if(argc < 5) {
 		usage(argv);
 		return 1;
 	}
@@ -40,12 +40,21 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	if(argc - argi < 3) {
+	if(argc - argi < 4) {
 		usage(argv);
 		return 1;
 	}
 
 	std::string match = argv[argi++];
+	int timeout;
+	try {
+		timeout = std::stoi(argv[argi++]);
+	} catch(...) {
+		if(nostderr == false) {
+			std::cerr << "Error: invalid arg timeout" << std::endl;
+		}
+		return 1;
+	}
 	std::string command = argv[argi++];
 	std::vector<std::string> files;
 	for(; argi < argc; argi++) {
@@ -152,7 +161,7 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		usleep(5000000);
+		usleep(timeout * 1000000);
 	}
 
 	close(inotify_fd);
