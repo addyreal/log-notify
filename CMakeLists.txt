@@ -1,3 +1,4 @@
+project(log-notify)
 cmake_minimum_required(VERSION 3.10.1)
 
 set(CMAKE_CXX_STANDARD 17)
